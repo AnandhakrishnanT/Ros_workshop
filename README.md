@@ -34,6 +34,7 @@
 - **Humble Hawksbill**
 - **Iron Irwini**
 - **Jazzy Jalisco**
+- **Kilted Kaiju**
 
 ---
 ![compatible-robots-ros-en](https://github.com/user-attachments/assets/cda26829-5a03-496b-922d-2ce9b1d6437d)
