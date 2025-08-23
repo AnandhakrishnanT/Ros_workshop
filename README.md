@@ -459,6 +459,10 @@ ros2 node list
 ```bash
 ros2 topic list
 ```
+#### Move your turtle in circle
+```bash
+ros2 topic pub /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0}, angular: {z: 1.0}}" -r 10
+```
 # micro-ROS
 
 #### Micro-ROS is a framework designed to enable the integration of small devices, such as microcontrollers and embedded systems, with the Robot Operating System (ROS) ecosystem. 
