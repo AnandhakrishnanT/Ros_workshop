@@ -721,3 +721,95 @@ void loop() {
   delay(500);  // Wait half a second before next reading
 }
 ```
+
+# Code for ESP32 Turtlesim - Ultrasonic sensor
+
+```bash
+
+#include <Arduino.h>
+
+#define TRIG 5
+#define ECHO 18
+
+long duration;
+float distance;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(TRIG, OUTPUT);
+  pinMode(ECHO, INPUT);
+}
+
+void loop() {
+  digitalWrite(TRIG, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+
+  duration = pulseIn(ECHO, HIGH);
+  distance = duration * 0.034 / 2; // cm
+
+  Serial.println(distance);
+  delay(100);
+}
+
+```
+
+# Code for ESP32 Turtlesim - Ultrasonic sensor python
+
+```bash
+
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
+import serial
+
+class ESP32Controller(Node):
+    def __init__(self):
+        super().__init__('esp32_controller')
+        self.publisher = self.create_publisher(Twist, '/turtle1/cmd_vel', 10)
+        self.ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1)  # Change USB port
+
+        self.timer = self.create_timer(0.1, self.control_loop)
+
+    def control_loop(self):
+        if self.ser.in_waiting > 0:
+            try:
+                line = self.ser.readline().decode().strip()
+                distance = float(line)
+                self.get_logger().info(f"Distance: {distance} cm")
+
+                cmd = Twist()
+                if distance > 15:  # No hand, move in circle
+                    cmd.linear.x = 1.0
+                    cmd.angular.z = 1.0
+                else:  # Hand close, stop
+                    cmd.linear.x = 0.0
+                    cmd.angular.z = 0.0
+
+                self.publisher.publish(cmd)
+            except:
+                pass
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = ESP32Controller()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+
+```
+
+## Command to run the above
+```bash
+
+ros2 run turtlesim turtlesim_node
+
+python3 esp32_controller.py
+
+
+```
