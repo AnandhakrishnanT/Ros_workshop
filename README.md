@@ -811,5 +811,7 @@ ros2 run turtlesim turtlesim_node
 
 python3 esp32_controller.py
 
+ros2 topic echo /turtle1/cmd_vel
+
 
 ```
